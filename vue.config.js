@@ -11,39 +11,47 @@ module.exports = {
                 name: ":" + arg,
                 value: value
               };
+
               // add attrs and bind current value
               node.attrsList.push(attr);
               node.attrsMap[attr.name] = attr.value;
+
               if (!node.attrs) {
                 node.attrs = [];
               }
+
               node.attrs.push({
                 name: arg,
                 value: value,
                 dynamic: false
               });
+
               // bind events
               const eventName = `update:${arg}`;
               const eventHandler = `$emit('update:${arg}', $event)`;
-              node.attrsMap["@" + eventName] = eventHandler;
+              const attrName = `@${eventName}`;
+
+              node.attrsMap[attr] = eventHandler;
               node.attrsList.push({
-                name: "@" + eventName,
+                name: attrName,
                 value: eventHandler
               });
+
               if (!node.events) {
                 node.events = {};
               }
+
               node.events[eventName] = {
                 value: eventHandler,
                 dynamic: false
               };
+
               // remove directive itself
-              let index = node.directives.findIndex(
-                (d) => d.rawName === rawName
-              );
-              node.directives.splice(index, 1);
-              index = node.attrsList.findIndex((attr) => attr.name === rawName);
-              node.attrsList.splice(index, 1);
+              const directiveIndex = node.directives.findIndex((d) => d.rawName === rawName);
+              const attrIndex = node.attrsList.findIndex((attr) => attr.name === rawName);
+
+              node.directives.splice(directiveIndex, 1);
+              node.attrsList.splice(attrIndex, 1);
             }
           }
         };
